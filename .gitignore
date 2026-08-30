@@ -1,0 +1,10 @@
+recordings/
+test_demo.py
+*.pyc
+__pycache__/
+密码.txt
+ws_test_stdout.txt
+ws_test_stderr.txt
+.claude/
+_check.js
+static/
