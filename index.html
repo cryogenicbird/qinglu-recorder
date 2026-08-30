@@ -29,14 +29,14 @@ body { font-family: var(--font); background: var(--bg0); color: var(--text1); he
 /* ── TOP BAR ── */
 #topbar { height: 52px; background: var(--bg1); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; padding: 0 16px; flex-shrink: 0; }
 #topbar .logo { font-size: 13px; font-weight: 600; color: var(--accent); letter-spacing: 1px; margin-right: 8px; white-space:nowrap;}
-.audio-block { display: flex; align-items: center; gap: 8px; }
+.audio-block { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .audio-label { font-size: 11px; color: var(--text2); white-space: nowrap; }
 .vol-track { position: relative; width: 120px; height: 6px; background: var(--bg3); border-radius: 3px; cursor: pointer; }
 .vol-fill { height: 100%; background: linear-gradient(90deg, #3ecf8e, #52e8a0); border-radius: 3px; pointer-events: none; transition: width 0.05s; }
 .vol-thumb { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 2px solid var(--accent); pointer-events: none; box-shadow: 0 0 4px rgba(62,207,142,0.4); }
 .vol-val { font-size: 11px; color: var(--text1); min-width: 52px; text-align: right; }
 .sep { width: 1px; height: 28px; background: var(--border); margin: 0 4px; }
-#rec-btn { margin-left: auto; display: flex; align-items: center; gap: 8px; padding: 0 16px; height: 34px; border-radius: 4px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; background: var(--red); color: #fff; transition: opacity .2s;white-space: nowrap; }
+#rec-btn { margin-left: auto; display: flex; align-items: center; gap: 8px; padding: 0 16px; height: 34px; border-radius: 4px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; background: var(--red); color: #fff; transition: opacity .2s;white-space: nowrap; flex-shrink: 0; }
 #rec-btn:hover { opacity: .85; }
 #rec-btn.recording { background: var(--bg3); color: var(--red); border: 1px solid var(--red); }
 .rec-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
@@ -140,6 +140,7 @@ body { font-family: var(--font); background: var(--bg0); color: var(--text1); he
 
 /* select dropdowns */
 select { background: var(--bg3); border: 1px solid var(--border2); color: var(--text1); border-radius: 4px; padding: 3px 6px; font-size: 11px; outline: none; cursor: pointer; }
+#out-dev, #cap-dev { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* ADD source dropdown */
 #add-src-wrap { position: relative; }
@@ -1608,16 +1609,20 @@ async function populateDevices() {
         const o = document.createElement('option');
         o.value = d.deviceId;
         o.textContent = d.label || '输出设备';
+        o.title = d.label || '';
         outSel.appendChild(o);
       }
       if (d.kind === 'audioinput') {
         const o = document.createElement('option');
         o.value = d.deviceId;
         o.textContent = d.label || '麦克风';
+        o.title = d.label || '';
         if (d.deviceId === state.capDeviceId) o.selected = true;
         capSel.appendChild(o);
       }
     });
+    outSel.title = outSel.options[outSel.selectedIndex]?.text || '';
+    capSel.title = capSel.options[capSel.selectedIndex]?.text || '';
     // Restore saved selection
     if (state.capDeviceId) capSel.value = state.capDeviceId;
   } catch(_) {}
@@ -1655,7 +1660,11 @@ initVolSlider('mic-track','mic-fill','mic-thumb','mic-val','mic');
 populateDevices();
 document.getElementById('cap-dev').addEventListener('change', function() {
   state.capDeviceId = this.value;
+  this.title = this.options[this.selectedIndex]?.text || '';
   saveSettings();
+});
+document.getElementById('out-dev').addEventListener('change', function() {
+  this.title = this.options[this.selectedIndex]?.text || '';
 });
 </script>
 </body>
